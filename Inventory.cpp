@@ -11,18 +11,34 @@ const std::vector<Product>& Inventory::getProducts() const {
     return products;
 }
 
-void Inventory::addProduct(const Product& p) {
-    // Sprawdzamy, czy produkt o danym ID juz istnieje
+// Zmieniona funkcja - teraz blokuje powtarzające się ID
+bool Inventory::addProduct(const Product& p) {
     auto it = std::find_if(products.begin(), products.end(),
                            [&p](const Product& existing) { return existing.id == p.id; });
 
     if (it != products.end()) {
-        it->quantity += p.quantity;
-        std::cout << "Produkt " << p.id << " juz istnieje. Zwiekszono ilosc o " << p.quantity << ".\n";
-    } else {
-        products.push_back(p);
-        std::cout << "Dodano nowy produkt: " << p.name << ".\n";
+        std::cout << "BLAD: W magazynie istnieje juz produkt o ID: " << p.id << "!\n";
+        return false; // Zwracamy false, bo dodanie się nie powiodło
+    } 
+    
+    products.push_back(p);
+    std::cout << "Dodano nowy produkt: " << p.name << ".\n";
+    return true;
+}
+
+// Nowa funkcja - tylko do uzupełniania stanu
+bool Inventory::addQuantity(const std::string& id, int amountToAdd) {
+    auto it = std::find_if(products.begin(), products.end(),
+                           [&id](const Product& existing) { return existing.id == id; });
+
+    if (it != products.end()) {
+        it->quantity += amountToAdd;
+        std::cout << "Zwiekszono ilosc produktu '" << it->name << "' o " << amountToAdd << ". Aktualny stan: " << it->quantity << "\n";
+        return true;
     }
+    
+    std::cout << "BLAD: Nie znaleziono produktu o ID: " << id << ".\n";
+    return false;
 }
 
 bool Inventory::removeProduct(const std::string& id) {
@@ -34,7 +50,7 @@ bool Inventory::removeProduct(const std::string& id) {
         std::cout << "Usunieto produkt o ID: " << id << ".\n";
         return true;
     }
-    std::cout << "Nie znaleziono produktu o ID: " << id << ".\n";
+    std::cout << "BLAD: Nie znaleziono produktu o ID: " << id << ".\n";
     return false;
 }
 

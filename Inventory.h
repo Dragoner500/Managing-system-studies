@@ -13,7 +13,10 @@ public:
     void setProducts(const std::vector<Product>& loadedProducts);
     const std::vector<Product>& getProducts() const;
     
-    void addProduct(const Product& newProduct);
+    // Zmienione i dodane funkcje
+    bool addProduct(const Product& newProduct);
+    bool addQuantity(const std::string& id, int amountToAdd);
+    
     bool removeProduct(const std::string& id);
     void displayAll() const;
 };
